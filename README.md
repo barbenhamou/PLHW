@@ -1,2 +1,2 @@
 # PLHW
-Programming Languages Course home work
+Programming Languages Course Homework
