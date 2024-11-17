@@ -8,4 +8,4 @@ let insert_at e i lst =
   let (left, right) = split_at i lst in
     left @ [e] @ right 
 
-let insert_none_at = fun index lst -> insert_at "None" index lst;;
+let insert_none_at index lst = insert_at "None" index lst;;
