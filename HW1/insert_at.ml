@@ -2,7 +2,7 @@
 let rec split_at n lst =
   match (n, lst) with
     | (_, []) -> ([], []) 
-    | (0, lst) -> ([], lst) 
+    | (0, _) -> ([], lst) 
     | (n, x :: y) -> let (left, right) = split_at (n - 1) y in (x :: left, right) 
 
 let insert_at e i lst =
