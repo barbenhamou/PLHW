@@ -4,17 +4,19 @@ let rec solve_a e s = match e with
   | Ast.Var v -> s v
   | Ast.Add (a, b) -> (solve_a a s) + (solve_a b s)
   | Ast.Sub (a, b) -> (solve_a a s) - (solve_a b s)
-  | Ast.Mult (a, b) -> (solve_a a s) * (solve_a b s);;
+  | Ast.Mult (a, b) -> (solve_a a s) * (solve_a b s)
+  | Ast.Shr (a, b) -> (solve_a a s) asr (solve_a b s)
+  | Ast.Shl (a,b) -> (solve_a a s) lsl (solve_a b s);;
 
  (* solve_b: bexp -> state -> bool *) 
  let rec solve_b e s = match e with
-  | Ast.True -> true
-  | Ast.False -> false
-  | Ast.Aeq (a, b) -> (solve_a a s) = (solve_a b s)
-  | Ast.Beq (a, b) -> (solve_b a s) = (solve_b b s)
-  | Ast.Gte (a, b) -> (solve_a a s) >= (solve_a b s)
-  | Ast.Neg b -> not (solve_b b s)
-  | Ast.And (a, b) -> (solve_b a s) && (solve_b b s)
+ | Ast.True -> "tt"
+ | Ast.False -> "ff"
+ | Ast.Aeq (a, b) -> if (solve_a a s) = (solve_a b s) then "tt" else "ff"
+ | Ast.Beq (a, b) -> if (solve_b a s) = (solve_b b s) then "tt" else "ff"
+ | Ast.Gte (a, b) -> if (solve_a a s) >= (solve_a b s) then "tt" else "ff"
+ | Ast.Neg b -> if (solve_b b s) = "tt" then "ff" else "tt"
+ | Ast.And (a, b) -> if (solve_b a s) = "tt" && (solve_b b s) = "tt" then "tt" else "ff"
 
 
 (* state update : to get a new state *) 
