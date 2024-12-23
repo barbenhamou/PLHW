@@ -1,8 +1,20 @@
 (* solve_a: aexp -> state -> int *) 
 let rec solve_a e s = match e with
+  | Ast.Num n -> n 
+  | Ast.Var v -> s v
+  | Ast.Add (a, b) -> (solve_a a s) + (solve_a b s)
+  | Ast.Sub (a, b) -> (solve_a a s) - (solve_a b s)
+  | Ast.Mult (a, b) -> (solve_a a s) * (solve_a b s);;
 
  (* solve_b: bexp -> state -> bool *) 
  let rec solve_b e s = match e with
+  | Ast.True -> true
+  | Ast.False -> false
+  | Ast.Aeq (a, b) -> (solve_a a s) = (solve_a b s)
+  | Ast.Beq (a, b) -> (solve_b a s) = (solve_b b s)
+  | Ast.Gte (a, b) -> (solve_a a s) >= (solve_a b s)
+  | Ast.Neg b -> not (solve_b b s)
+  | Ast.And (a, b) -> (solve_b a s) && (solve_b b s)
 
 
 (* state update : to get a new state *) 

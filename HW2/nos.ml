@@ -1,6 +1,11 @@
 [@@@ocaml.warning "-8"];;
 
-let rec nos c 
+let rec nos (o, s) = match o with
+  | Ast.Ass (v, e) -> Semantics.update v e s
+  | Ast.Skip -> s
+  | Ast.Comp (s1, s2) -> nos (s2, (nos (s1, s)))
+  | Ast.If (b, s1, s2) -> if (Semantics.solve_b b s) then (nos (s1, s)) else (nos (s2, s))
+  | Ast.While (b, s1) -> let rec loop s = if (Semantics.solve_b b s) then loop (nos (s1, s)) else ( s ) in loop s;;
 
 (* tests *) 
 
