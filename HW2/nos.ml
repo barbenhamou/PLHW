@@ -29,8 +29,16 @@ print_string "y = ";;
 print_int (let new_state = nos (Ast.test4, Semantics.s1) in new_state "y");;
 print_endline "";;
 
-print_string "y = ";;
-print_int (let new_state = nos (Ast.test5, Semantics.default_state) in new_state "y");;
+let new_state = nos (Ast.test5, Semantics.default_state);;
+print_string "a = ";;
+print_int (new_state "a");;
 print_endline "";;
 
+print_string "b = ";;
+print_int (new_state "b");;
+print_endline "";;
+
+print_string "c = ";;
+print_int (new_state "c");;
+print_endline "";;
 
