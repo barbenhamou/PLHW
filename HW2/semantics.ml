@@ -7,13 +7,13 @@ let rec solve_a e s = match e with
   | Ast.Mult (a, b) -> (solve_a a s) * (solve_a b s)
   | Ast.Shr (a, b) -> 
       let base = solve_a a s in
-      let shifts = solve_a b s in
-      if shifts > 0 then solve_a (Ast.Shr (Ast.Num (base / 2), Ast.Num (shifts - 1))) s
+      let power = solve_a b s in
+      if power > 0 then solve_a (Ast.Shr (Ast.Num (base / 2), Ast.Num (power - 1))) s
       else base
   | Ast.Shl (a, b) -> 
       let base = solve_a a s in
-      let shifts = solve_a b s in
-      if shifts > 0 then solve_a (Ast.Shl (Ast.Num (base * 2), Ast.Num (shifts - 1))) s
+      let power = solve_a b s in
+      if power > 0 then solve_a (Ast.Shl (Ast.Num (base * 2), Ast.Num (power - 1))) s
       else base
 
  (* solve_b: bexp -> state -> bool *) 
