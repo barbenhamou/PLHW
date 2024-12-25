@@ -46,7 +46,7 @@ print_string "c = ";;
 print_int (new_state "c");;
 print_endline "";;
 
-print_string "x = ";;
+(* print_string "x = ";;
 print_int (let new_state = nos (Ast.test6, Semantics.default_state) in new_state "x");;
-print_endline "";;
+print_endline "";; *)
 
