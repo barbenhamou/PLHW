@@ -2,15 +2,14 @@ open Ast
 open Nos
 open Semantics
 
-(* Generate variable names for array elements (x1, x2, ..., xn) *)
 let gen_x i = "x" ^ string_of_int i
 
-(* Add n randomly generated vars x1, x2, ..., xn and return the new state *)
+(* Generate n variables with random values *)
 let rec generate n s =
   if n = 0 then s
-  else generate (n - 1) (update (gen_x n) (Num (Random.int 1500)) s)
+  else generate (n - 1) (update (gen_x n) (Num (Random.int 3200)) s)
 
-(* Swap operation for two adjacent variables *)
+(* Swap operation *)
 let swap vi vj =
   Comp (
     Ass ("temp", Var vi),
@@ -20,36 +19,43 @@ let swap vi vj =
     )
   )
 
-(* Generate the bubble sort inner loop logic for comparison and swapping *)
-let rec bubbling_up i n =
+(* One pass of bubbling up with a sorted flag *)
+let rec bubbling_up_with_flag i n =
   if i < n then
-    Comp(
+    Comp (
       If (
         Neg (Gte (Var (gen_x (i + 1)), Var (gen_x i))),
-        swap (gen_x i) (gen_x (i + 1)),
+        Comp (
+          swap (gen_x i) (gen_x (i + 1)),
+          Ass ("sorted", Num 1)  (* Set sorted to 0 if a swap is made *)
+        ),
         Skip
       ),
-      bubbling_up (i + 1) n
+      bubbling_up_with_flag (i + 1) n
     )
   else
     Skip
-    
 
-(* Generate the bubble sort logic: multiple passes through the array *)
-let rec bubble_sort_pass n rounds =
-  if rounds <= 0 then Skip
+(* Bubble sort logic with the boolean improvement *)
+let rec bubble_sort_logic_with_flag n times =
+  if times <= 0 then Skip
   else
     Comp (
-      bubbling_up 1 n,  (* Compare and swap adjacent elements in this pass *)
-      bubble_sort_pass n (rounds - 1)  (* Continue to the next pass *)
+      Ass ("sorted", Num 0),  (* Assume the array is sorted *)
+      Comp (
+        bubbling_up_with_flag 1 n,  (* Perform bubbling up *)
+        If (
+          Neg (Gte (Var "sorted", Num 1)),  (* If sorted is 0, terminate early *)
+          Skip,
+          bubble_sort_logic_with_flag n (times - 1)  (* Continue to the next pass *)
+        )
+      )
     )
 
 (* Initialize the state dynamically with n variables *)
 let initialize_state n =
   let state = generate n default_state in
-  (* Initializing additional control variables *)
-  let state = update "n" (Num n) state in
-  let state = update "i" (Num 1) state in
+  let state = update "sorted" (Num 1) state in
   let state = update "temp" (Num 0) state in
   state
 
@@ -68,13 +74,10 @@ let run_bubble_sort n =
   Printf.printf "Initialization of n variables:\n";
   print_state n init;
 
-  (* Generate and solve the bubble sort statement with the initialized state *)
-  let sort_stmt = bubble_sort_pass n n in
-  let final = nos (sort_stmt, init) in
+  let cmd = bubble_sort_logic_with_flag n n in
+  let final = nos (cmd, init) in
 
-  (* Print the sorted state *)
   Printf.printf "The sorted variables:\n";
   print_state n final
 
-(* Execute the function *)
-let () = run_bubble_sort 6
+let () = run_bubble_sort 10

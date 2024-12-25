@@ -5,8 +5,16 @@ let rec solve_a e s = match e with
   | Ast.Add (a, b) -> (solve_a a s) + (solve_a b s)
   | Ast.Sub (a, b) -> (solve_a a s) - (solve_a b s)
   | Ast.Mult (a, b) -> (solve_a a s) * (solve_a b s)
-  | Ast.Shr (a, b) -> (solve_a a s) asr (solve_a b s)
-  | Ast.Shl (a,b) -> (solve_a a s) lsl (solve_a b s);;
+  | Ast.Shr (a, b) -> 
+      let base = solve_a a s in
+      let shifts = solve_a b s in
+      if shifts > 0 then solve_a (Ast.Shr (Ast.Num (base / 2), Ast.Num (shifts - 1))) s
+      else base
+  | Ast.Shl (a, b) -> 
+      let base = solve_a a s in
+      let shifts = solve_a b s in
+      if shifts > 0 then solve_a (Ast.Shl (Ast.Num (base * 2), Ast.Num (shifts - 1))) s
+      else base
 
  (* solve_b: bexp -> state -> bool *) 
  let rec solve_b e s = match e with
