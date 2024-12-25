@@ -5,7 +5,11 @@ let rec nos (o, s) = match o with
   | Ast.Skip -> s
   | Ast.Comp (s1, s2) -> nos (s2, (nos (s1, s)))
   | Ast.If (b, s1, s2) -> if (Semantics.solve_b b s) = "tt" then (nos (s1, s)) else (nos (s2, s))
-  | Ast.While (b, s1) -> let rec loop s = if (Semantics.solve_b b s) = "tt" then loop (nos (s1, s)) else ( s ) in loop s;;
+  | Ast.While (b, s1) -> let rec loop s = if (Semantics.solve_b b s) = "tt" then loop (nos (s1, s)) else ( s ) in loop s
+  | Ast.Repeat (s1, b) ->
+        let rec loop s =
+          let s' = nos (s1, s) in
+          if (Semantics.solve_b b s') = "tt" then s' else loop (s') in loop s;;
 
 (* tests *) 
 
@@ -40,5 +44,9 @@ print_endline "";;
 
 print_string "c = ";;
 print_int (new_state "c");;
+print_endline "";;
+
+print_string "x = ";;
+print_int (let new_state = nos (Ast.test6, Semantics.default_state) in new_state "x");;
 print_endline "";;
 
