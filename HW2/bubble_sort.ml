@@ -27,7 +27,7 @@ let rec bubbling_up_with_flag i n =
         Neg (Gte (Var (gen_x (i + 1)), Var (gen_x i))),
         Comp (
           swap (gen_x i) (gen_x (i + 1)),
-          Ass ("sorted", Num 1)  (* Set sorted to 0 if a swap is made *)
+          Ass ("sorted", Num 1)  (* if a swap made, change the flag to 1 *)
         ),
         Skip
       ),
@@ -41,25 +41,24 @@ let rec bubble_sort_logic_with_flag n times =
   if times <= 0 then Skip
   else
     Comp (
-      Ass ("sorted", Num 0),  (* Assume the array is sorted *)
+      Ass ("sorted", Num 0),  (* initialize the swap indicator *)
       Comp (
-        bubbling_up_with_flag 1 n,  (* Perform bubbling up *)
+        bubbling_up_with_flag 1 n,
         If (
-          Neg (Gte (Var "sorted", Num 1)),  (* If sorted is 0, terminate early *)
+          Neg (Gte (Var "sorted", Num 1)),  (* if no swaps were made the numbers are sorted  *)
           Skip,
-          bubble_sort_logic_with_flag n (times - 1)  (* Continue to the next pass *)
+          bubble_sort_logic_with_flag n (times - 1)
         )
       )
     )
 
-(* Initialize the state dynamically with n variables *)
+(* Generate random state *)
 let initialize_state n =
   let state = generate n default_state in
   let state = update "sorted" (Num 1) state in
   let state = update "temp" (Num 0) state in
   state
 
-(* Print the values of the variables in the state *)
 let print_state n state =
   for i = 1 to n do
     let var_name = gen_x i in
@@ -69,7 +68,6 @@ let print_state n state =
 
 (* Run the bubble sort algorithm with n variables *)
 let run_bubble_sort n =
-  (* Initialize the state with random values for n variables *)
   let init = initialize_state n in
   Printf.printf "Initialization of n variables:\n";
   print_state n init;
@@ -80,4 +78,4 @@ let run_bubble_sort n =
   Printf.printf "The sorted variables:\n";
   print_state n final
 
-let () = run_bubble_sort 10
+let () = run_bubble_sort 35
