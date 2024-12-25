@@ -78,4 +78,4 @@ let run_bubble_sort n =
   Printf.printf "The sorted variables:\n";
   print_state n final
 
-let () = run_bubble_sort 35
+let () = run_bubble_sort 6
